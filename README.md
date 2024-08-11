@@ -120,3 +120,6 @@ Runnig Service:
 ![Screenshot from 2024-08-11 18-18-20](https://github.com/user-attachments/assets/045e741b-a721-4926-bee3-a7c3fd25801c)
 ![Screenshot from 2024-08-11 18-18-31](https://github.com/user-attachments/assets/f70f3cf9-aa27-495a-ac8b-5408c93f3553)
 
+## Security Note
+ * The best practice for managing secrets is to use a mechanism like Sealed Secrets, which encrypts secret files so that only the cluster can decrypt them. However, I did not implement this here because it requires Sealed Secrets Manager, and I had limited resources to set it up.
+
