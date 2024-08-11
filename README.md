@@ -1,93 +1,113 @@
-# contacts-helmChart
+# Agenda:
+- Application Overview
+- Docker compose and Dev ENV
+- Helm Overview.
+- Frontend Helm Deployment
+- Backend Helm Deployment
+- Infrastructure Configurations
+- Pipeline and Repository URLs
+- Monitoring and Observability
+
+## 1) Application Overview
+Contacts application for managing contacts, where contacts are stored in a MongoDB database. You can delete, update, and add new contacts.
+
+- App URL: https://intouch.cloud-stacks.com/
+
+- home page:
+![Screenshot from 2024-08-11 17-35-42](https://github.com/user-attachments/assets/2ba30062-b5a2-4e52-a7ad-deaa31f5b8ae)
+
+- contacts page:
+![Screenshot from 2024-08-11 17-36-15](https://github.com/user-attachments/assets/87affc94-5684-46b8-8014-3dc2d1298dab)
+
+- api endpoint
+![Screenshot from 2024-08-11 17-36-32](https://github.com/user-attachments/assets/40df9df2-57c5-4508-8189-42b7487368ad)
 
 
+## 2) Docker compose and Dev ENV
+* For Backend check ReadMe File in this repo:  https://github.com/yousabu/contacts-system-backend.git
+* For Frontend check ReadMe File in this repo: https://github.com/yousabu/contacts-system-frontend.git
 
-## Getting started
+## 3) Helm Overview.
+* I have created a Helm template that can be used for both frontend and backend deployments. By using the values.yaml file located in each repository (frontend/backend), the deployment logic will be determined.
+ 
+ Backend values.yaml : https://github.com/yousabu/contacts-system-backend/blob/main/values.yaml
+ 
+ Frontend values.yaml: https://github.com/yousabu/contacts-system-frontend/blob/main/values.yaml
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+ ``` File Tree
+ Helm Values Configuration
+├── replicaCount
+│
+├── backend/frontend
+│
+├── namespace
+│
+├── image
+│   ├── repository
+│   ├── tag
+│   └── pullPolicy
+│
+├── service
+│   ├── type
+│   ├── port
+│   └── nodeport
+│
+├── autoscaling
+│   ├── enabled
+│   ├── minReplicas
+│   ├── maxReplicas
+│   └── targetCPUUtilizationPercentage
+│
+├── env vars
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/media-network-task/contacts-helmchart.git
-git branch -M main
-git push -uf origin main
-```
+## 4) Frontend Helm Deployment
+* As per image bellow: 
 
-## Integrate with your tools
+* Runnig Resources:
 
-- [ ] [Set up project integrations](https://gitlab.com/media-network-task/contacts-helmchart/-/settings/integrations)
+## 5) Backend Helm Deployment
+* As per image bellow: 
+![Screenshot from 2024-08-11 16-41-22](https://github.com/user-attachments/assets/e756e25e-65de-4955-b0c7-9f92f95f5f0f)
 
-## Collaborate with your team
+* Runnig Resources:
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+![Screenshot from 2024-08-11 18-09-29](https://github.com/user-attachments/assets/917d34bc-df0b-44df-9b0c-2e413fa877f8)
 
-## Test and Deploy
+## 6) Infrastructure Configurations
 
-Use the built-in continuous integration in GitLab.
+*  Cluster: I used MicroK8s installed on an EC2 instance on AWS to create a lightweight cluster and enabled public access to it. I then generated a configuration file (config) for future use.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+* Service Connection: I set up the connection between Azure DevOps and the cluster using the configuration file.
 
-***
+* Connections: The cluster contains an internal ingress to route traffic between the frontend and backend.
 
-# Editing this README
+* Ingress: I set up an Ingress for the domain (https://intouch.cloud-stacks.com/) and requested a certificate for it using Cert Manager, issued by Let's Encrypt.
+* Horizontal Pod Autoscaler (HPA): Configured to automatically scale the number of pod replicas up or down based on observed CPU utilization or other selected metrics. This ensures that the application can handle varying loads efficiently
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+## 7) Pipeline and Repository URLs
 
-## Suggestions for a good README
+We have two pipelines, each in its own repository, to build, push, and deploy the application using Helm:
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+* HelmChart Repository: https://github.com/yousabu/contacts-system-helmchart.git
+-----------
+* Pipeline For Backend & Frontend on azure:  https://dev.azure.com/abuhamda/retail-media-org/_build
+-----------
+* Backend GitHub Repository: https://github.com/yousabu/contacts-system-backend.git
+* Frontend GitHub Repository: https://github.com/yousabu/contacts-system-frontend.git
 
-## Name
-Choose a self-explaining name for your project.
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+## 8) Monitoring and Observability
+* Due to a lack of resources, I didn't use Prometheus and Grafana, even though they are the most popular monitoring tools. Instead, I used a New Relic free trial as a lightweight monitoring tool.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Dashboard:
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+![Screenshot from 2024-08-11 18-14-54](https://github.com/user-attachments/assets/b4ee7dec-9652-446b-b7a2-0b8255c9ea02)
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+![Screenshot from 2024-08-11 18-17-26](https://github.com/user-attachments/assets/f57123dd-dbe7-43f6-b858-72c02f9cb777)
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+Runnig Service:
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+![Screenshot from 2024-08-11 18-18-20](https://github.com/user-attachments/assets/045e741b-a721-4926-bee3-a7c3fd25801c)
+![Screenshot from 2024-08-11 18-18-31](https://github.com/user-attachments/assets/f70f3cf9-aa27-495a-ac8b-5408c93f3553)
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
