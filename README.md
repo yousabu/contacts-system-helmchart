@@ -19,7 +19,8 @@ Contacts application for managing contacts, where contacts are stored in a Mongo
 - contacts page:
 ![Screenshot from 2024-08-11 17-36-15](https://github.com/user-attachments/assets/87affc94-5684-46b8-8014-3dc2d1298dab)
 
-- api endpoint
+- api endpoint:
+  
 ![Screenshot from 2024-08-11 17-36-32](https://github.com/user-attachments/assets/40df9df2-57c5-4508-8189-42b7487368ad)
 
 
