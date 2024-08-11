@@ -1,0 +1,92 @@
+{{- if .Values.backend}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: express
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: express
+  template:
+    metadata:
+      labels:
+        app: express
+    spec:
+      containers:
+        - name: express
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 3000
+          env:
+            - name: SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: express-config
+                  key: SECRET
+            - name: MONGO_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: express-secrets
+                  key: MONGO_DB_USERNAME
+            - name: MONGO_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: express-secrets
+                  key: MONGO_DB_PASSWORD
+            - name: MONGO_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: express-config
+                  key: MONGO_DB_HOST
+            - name: MONGO_DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: express-config
+                  key: MONGO_DB_PORT
+            - name: MONGO_DB_PARAMETERS
+              valueFrom:
+                configMapKeyRef:
+                  name: express-config
+                  key: MONGO_DB_PARAMETERS
+            - name: MONGO_DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: express-config
+                  key: MONGO_DB_DATABASE
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+{{- end }}
+{{- if .Values.frontend}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: angular-deployment
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: angular
+  template:
+    metadata:
+      labels:
+        app: angular
+    spec:
+      containers:
+        - name: angular
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 4000
+          env:
+            - name: NODE_ENV
+              value: dev
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+{{- end }}

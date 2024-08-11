@@ -1,0 +1,13 @@
+{{- if .Values.backend}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: express-config
+  namespace: {{ .Values.namespace }}
+data:
+  SECRET: {{ .Values.env.SECRET | quote }}
+  MONGO_DB_HOST: {{ .Values.env.MONGO_DB_HOST | quote }}
+  MONGO_DB_PORT: {{ .Values.env.MONGO_DB_PORT | quote }}
+  MONGO_DB_PARAMETERS: {{ .Values.env.MONGO_DB_PARAMETERS | quote }}
+  MONGO_DB_DATABASE: {{ .Values.env.MONGO_DB_DATABASE | quote }}
+{{- end }}

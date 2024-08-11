@@ -1,0 +1,77 @@
+{{- if .Values.frontend}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: default
+data:
+  nginx.conf: |
+    events {
+        worker_connections 1024;
+    }
+    http {
+      upstream frontend {
+        server angular-service.frontend.svc.cluster.local:4000;
+      } 
+      upstream backend {
+        server express.backend.svc.cluster.local:3000; 
+      }
+
+      server {
+        listen 80;
+        server_name intouch.cloud-stacks.com;
+
+        location / {
+           proxy_pass http://frontend;
+           proxy_set_header Host $host;
+        }
+
+        location /api {
+           proxy_pass http://backend;
+           proxy_set_header Host $host;
+        }
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: internal-nginx-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        volumeMounts:
+        - name: nginx-config-volume
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+      volumes:
+      - name: nginx-config-volume
+        configMap:
+          name: nginx-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: internal-nginx-service
+  namespace: default
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+
+{{- end }}
