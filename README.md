@@ -61,17 +61,25 @@ Contacts application for managing contacts, where contacts are stored in a Mongo
 ├── env vars
 ```
 ## 4) Frontend Helm Deployment
-* As per image bellow: 
+* As per image bellow:
+
+  ![ang](https://github.com/user-attachments/assets/9db261ea-2e51-4893-83d5-303ab12ded61)
+
 
 * Runnig Resources:
+![front](https://github.com/user-attachments/assets/c2da7540-105b-4b3e-972e-5321e45ad7aa)
+
+  
 
 ## 5) Backend Helm Deployment
-* As per image bellow: 
-![Screenshot from 2024-08-11 16-41-22](https://github.com/user-attachments/assets/e756e25e-65de-4955-b0c7-9f92f95f5f0f)
+* As per image bellow:
+  
+![express](https://github.com/user-attachments/assets/c3b84e3f-704f-4221-8aef-8e7b1085557b)
 
 * Runnig Resources:
 
-![Screenshot from 2024-08-11 18-09-29](https://github.com/user-attachments/assets/917d34bc-df0b-44df-9b0c-2e413fa877f8)
+![Screenshot from 2024-08-11 18-33-33](https://github.com/user-attachments/assets/133a499f-1936-46da-87da-f455001411a5)
+
 
 ## 6) Infrastructure Configurations
 
